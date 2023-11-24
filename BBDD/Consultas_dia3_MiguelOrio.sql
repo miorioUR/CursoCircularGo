@@ -1,0 +1,49 @@
+//Subconsulta del ejercicio 1
+SELECT g.PK_ID_GRUPO
+FROM GRUPO g join EQUIPO_GRUPO eg on g.PK_ID_GRUPO = eg.FK_ID_GRUPO 
+			 join EQUIPO e on eg.FK_ID_EQUIPO = e.PK_ID_EQUIPO 
+			 join JUGADOR j on e.PK_ID_EQUIPO = j.FK_ID_EQUIPO
+GROUP BY g.PK_ID_GRUPO 
+ORDER BY avg(j.FECHA_NACIMIENTO) desc
+LIMIT 1
+
+
+//Ejercicio 1
+SELECT avg(p.SETS_LOCAL)
+FROM PARTIDO p join EQUIPO e ON p.FK_ID_EQUIPO_LOCAL = e.PK_ID_EQUIPO or p.FK_ID_EQUIPO_VISITANTE =e.PK_ID_EQUIPO 
+			   join EQUIPO_GRUPO eg on e.PK_ID_EQUIPO = eg.FK_ID_EQUIPO 
+WHERE eg.FK_ID_GRUPO = (SELECT g.PK_ID_GRUPO
+						FROM GRUPO g join EQUIPO_GRUPO eg on g.PK_ID_GRUPO = eg.FK_ID_GRUPO 
+									 join EQUIPO e on eg.FK_ID_EQUIPO = e.PK_ID_EQUIPO 
+									 join JUGADOR j on e.PK_ID_EQUIPO = j.FK_ID_EQUIPO
+						GROUP BY g.PK_ID_GRUPO 
+						ORDER BY avg(j.FECHA_NACIMIENTO) desc
+						LIMIT 1
+						)
+GROUP BY eg.FK_ID_GRUPO 
+
+//Ejercicio 2
+SELECT g.PK_ID_GRUPO as "Grupo", avg(year(NOW()) - year(j.FECHA_NACIMIENTO)) as "Edad"
+FROM GRUPO g join EQUIPO_GRUPO eg on g.PK_ID_GRUPO = eg.FK_ID_GRUPO 
+			 join EQUIPO e on eg.FK_ID_EQUIPO = e.PK_ID_EQUIPO 
+			 join JUGADOR j on e.PK_ID_EQUIPO = j.FK_ID_EQUIPO
+GROUP BY g.PK_ID_GRUPO 
+ORDER BY Edad
+
+//Ejercicio 3
+
+//Ejercicio 4
+SELECT concat(e.NOMBRE, " " , e.APELLIDO_1, " ", e.APELLIDO_2) as "Nombre", e.FECHA_NACIMIENTO 
+FROM ENTRENADOR e
+WHERE month(e.FECHA_NACIMIENTO)=8
+
+//Ejercicio 5
+SELECT FECHA_PARTIDO , FK_ID_EQUIPO_LOCAL , FK_ID_EQUIPO_VISITANTE , SETS_LOCAL , SETS_VISITANTE
+FROM PARTIDO
+WHERE DATEDIFF(FECHA_PARTIDO, NOW()) > 30
+
+//Ejercicio 6
+SELECT concat(j.NOMBRE, " " , j.APELLIDO_1 , " ", j.APELLIDO_2) as "Jugador", g.NOMBRE as "Grupo"
+FROM JUGADOR j join EQUIPO e ON j.FK_ID_EQUIPO = e.PK_ID_EQUIPO
+			   join EQUIPO_GRUPO eg ON e.PK_ID_EQUIPO  = eg.FK_ID_EQUIPO 
+			   join GRUPO g  ON eg.FK_ID_GRUPO = g.PK_ID_GRUPO  
